@@ -1,149 +1,207 @@
-# Algo_Task
-
+# Algo_Task: Distinct Values in Array  
 A brief but mandatory documentation for my algo task at uni.
 
-## 3rd Task: Distinct Values in Array
-
-This task involves writing algorithms to count the number of distinct values in a zero-indexed array `A` consisting of `N` integers. Below are three different approaches to solve this problem.
-
 ---
 
-### 1st Algorithm Explanation: Distinct Values Using Bubble Sort (#1)
+## 1st Algorithm Explanation: Brute Force Comparison (#1)
 
-This algorithm counts the number of distinct values in a zero-indexed array `A` by first sorting the array using bubble sort and then counting unique adjacent elements.
+This algorithm counts the number of distinct elements in an array using a basic brute-force approach.
 
-#### Algorithm Steps:
+### Algorithm Steps:
 
-1. Check if the array is empty; return 0 if true.
-2. Sort the array using bubble sort by comparing adjacent elements and swapping if they are in the wrong order.
-3. Iterate through the sorted array, incrementing a counter when a new distinct value is encountered.
-4. Return the total count of distinct values.
+1. Initialize a counter `distinctCount` to zero.  
+2. Loop through each element `i` in the array.  
+3. For each `i`, check whether it has appeared before by looping from `0` to `i-1`.  
+4. If it has not appeared before, increment `distinctCount`.  
+5. Continue this process for all elements in the array.  
+6. Return `distinctCount` at the end.
 
-#### Complexity Analysis:
+### Complexity Analysis:
 
-- **Time Complexity**: `O(n²)` - Sorting with bubble sort takes `O(n²)`, and the subsequent distinct count pass takes `O(n)`, dominated by the sorting step.
-- **Space Complexity**: `O(1)` - Only a constant amount of extra space is used for variables.
+- **Time Complexity:** O(n²) – Two nested loops are used, where each element is compared with all previous elements.  
+- **Space Complexity:** O(1) – No extra space is used apart from a few variables.
 
-#### Example Usage:
-```python
-array = [2, 1, 1, 2, 3, 1]
-result = distinct_first(array)
-print("Number of distinct values:", result)  # Output: 3
-```
+### Example Usage:
 
----
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
 
-### 2nd Algorithm Explanation: Distinct Values Using Recursion (#2)
+int countDistinctBruteForce(const vector<int>& v) {
+    int distinctCount = 0;
+    for (int i = 0; i < v.size(); ++i) {
+        bool isNew = true;
+        for (int j = 0; j < i; ++j) {
+            if (v[i] == v[j]) {
+                isNew = false;
+                break;
+            }
+        }
+        if (isNew) {
+            ++distinctCount;
+        }
+    }
+    return distinctCount;
+}
 
-This algorithm counts the number of distinct values in a zero-indexed array `A` using a recursive approach with a dictionary to track unique elements.
-
-#### Algorithm Steps:
-
-1. Initialize a dictionary and index (defaulting to the last element) if not provided.
-2. Use recursion to process each element from the end to the start of the array.
-3. Add an element to the dictionary if it’s not already present.
-4. Return the size of the dictionary as the count of distinct values when the base case (index < 0) is reached.
-
-#### Complexity Analysis:
-
-- **Time Complexity**: `O(n)` - Each element is processed once, with dictionary operations being `O(1)` on average.
-- **Space Complexity**: `O(n)` - The dictionary stores up to `n` distinct elements.
-
-#### Example Usage:
-```python
-array = [2, 1, 1, 2, 3, 1]
-result = distinct_recursion_second(array)
-print("Number of distinct values:", result)  # Output: 3
+int main() {
+    vector<int> nums = {1, 2, 2, 3, 4, 4, 5};
+    cout << "Distinct values (Brute Force): " << countDistinctBruteForce(nums) << endl;
+    return 0;
+}
 ```
 
 ---
 
-### 3rd Algorithm Explanation: Distinct Values Using List (#3)
+## 2nd Algorithm Explanation: Sorting-Based Counting (#2)
 
-This algorithm counts the number of distinct values in a zero-indexed array `A` by building a list of unique elements.
+This algorithm first sorts the array and then counts distinct values by checking adjacent elements.
 
-#### Algorithm Steps:
+### Algorithm Steps:
 
-1. Initialize an empty list to store distinct values.
-2. Iterate through the array, adding each element to the list if it’s not already present.
-3. Return the length of the list as the count of distinct values.
+1. Sort the input array using Bubble Sort.  
+2. Initialize a counter `distinctCount` to 1.  
+3. Iterate through the sorted array starting from the second element.  
+4. If the current element is different from the previous one, increment `distinctCount`.  
+5. Return `distinctCount`.
 
-#### Complexity Analysis:
+### Complexity Analysis:
 
-- **Time Complexity**: `O(n²)` - Checking if an element exists in the list takes `O(n)` for each of the `n` elements.
-- **Space Complexity**: `O(k)` - Where `k` is the number of distinct elements (up to `n`).
+- **Time Complexity:** O(n²) – Due to Bubble Sort being used.  
+- **Space Complexity:** O(1) – Sorting is done in-place.
 
-#### Example Usage:
-```python
-array = [2, 1, 1, 2, 3, 1]
-result = distinct_first(array)  # Note: Function name reused, consider renaming
-print("Number of distinct values:", result)  # Output: 3
+### Example Usage:
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void bubbleSort(vector<int>& v) {
+    int n = v.size();
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (v[j] > v[j + 1]) {
+                swap(v[j], v[j + 1]);
+            }
+        }
+    }
+}
+
+int countDistinctSorted(vector<int> v) {
+    bubbleSort(v);
+    int distinctCount = 1;
+    for (int i = 1; i < v.size(); ++i) {
+        if (v[i] != v[i - 1]) {
+            ++distinctCount;
+        }
+    }
+    return distinctCount;
+}
+
+int main() {
+    vector<int> nums = {1, 2, 2, 3, 4, 4, 5};
+    cout << "Distinct values (Sorted): " << countDistinctSorted(nums) << endl;
+    return 0;
+}
 ```
 
 ---
 
-## Pseudo Code
+## 3rd Algorithm Explanation: Hash Map (Using Set) (#3)
 
-### Pseudo Code for 1st Algo:
-```
-algorithm distinct_first(A):
-    if A is empty:
-        return 0
-    
-    n = length of A
-    for i from 0 to n-1:
-        swapped = false
-        for j from 0 to n-i-2:
-            if A[j] > A[j+1]:
-                swap A[j] with A[j+1]
-                swapped = true
-        if not swapped:
-            break
-    
-    count = 1
-    for i from 0 to n-2:
-        if A[i] != A[i+1]:
-            count = count + 1
-    return count
-```
+This algorithm uses a set to automatically eliminate duplicates and count distinct values.
 
-### Pseudo Code for 2nd Algo:
-```
-algorithm distinct_recursion_second(A, index, dictionary):
-    if index is None:
-        index = length of A - 1
-    if dictionary is None:
-        dictionary = empty dictionary
-    
-    if index < 0:
-        return length of dictionary
-    
-    if A[index] not in dictionary:
-        dictionary[A[index]] = index
-    
-    return distinct_recursion_second(A, index - 1, dictionary)
-```
+### Algorithm Steps:
 
-### Pseudo Code for 3rd Algo:
-```
-algorithm distinct_first(A):
-    unique_list = empty list
-    for each item in A:
-        if item not in unique_list:
-            append item to unique_list
-    return length of unique_list
+1. Initialize an empty set `s`.  
+2. Iterate through each element of the array.  
+3. Insert each element into the set.  
+4. After all insertions, return the size of the set.
+
+### Complexity Analysis:
+
+- **Time Complexity:** O(n) – Average-case complexity with `unordered_set`.  
+- **Space Complexity:** O(n) – To store the elements in the set.
+
+### Example Usage:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+using namespace std;
+
+int countDistinctSet(const vector<int>& v) {
+    unordered_set<int> s;
+    for (int val : v) {
+        s.insert(val);
+    }
+    return s.size();
+}
+
+int main() {
+    vector<int> nums = {1, 2, 2, 3, 4, 4, 5};
+    cout << "Distinct values (Set): " << countDistinctSet(nums) << endl;
+    return 0;
+}
 ```
 
 ---
 
-## Comparison Between All Algorithms
+## Pseudo Code for 1st Algo:
 
-| Algorithm                  | Time Complexity | Description                                                        |
-|---------------------------|------------------|--------------------------------------------------------------------|
-| First Algorithm (Bubble Sort) | O(n²)           | Uses bubble sort for sorting, followed by a linear pass to count distinct values. |
-| Second Algorithm (Recursion)  | O(n)            | Recursively processes each element with O(1) dictionary operations. |
-| Third Algorithm (List)        | O(n²)           | Checks list membership for each element, leading to quadratic complexity. |
+```
+algorithm count_distinct_brute_force(v):
+    distinctCount = 0
+    for i from 0 to v.size() - 1:
+        isNew = true
+        for j from 0 to i - 1:
+            if v[i] == v[j]:
+                isNew = false
+                break
+        if isNew:
+            distinctCount += 1
+    return distinctCount
+```
 
 ---
 
-## ✅ Best Algorithm: Second Algorithm (O(n))
+## Pseudo Code for 2nd Algo:
+
+```
+algorithm count_distinct_sorted(v):
+    bubble_sort(v)
+    distinctCount = 1
+    for i from 1 to v.size() - 1:
+        if v[i] != v[i - 1]:
+            distinctCount += 1
+    return distinctCount
+```
+
+---
+
+## Pseudo Code for 3rd Algo:
+
+```
+algorithm count_distinct_set(v):
+    s = empty set
+    for i from 0 to v.size() - 1:
+        insert v[i] into s
+    return size of s
+```
+
+---
+
+## Comparison between all Algo's Time Complexity:
+
+| Algorithm         | Time Complexity | Description                                                                 |
+|-------------------|------------------|-----------------------------------------------------------------------------|
+| First Algorithm    | O(n²)           | Brute-force approach comparing each element with all previous ones.        |
+| Second Algorithm   | O(n²)           | Uses Bubble Sort. Can be reduced to O(n log n) with faster sorting method. |
+| Third Algorithm    | O(n)            | Uses `unordered_set` for fast lookups and insertions.                      |
+
+**Best Algorithm:** ✅ Third Algorithm (O(n))
+
+---
